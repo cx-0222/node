@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .active {
+            width: 100px;
+            height:100px;
+            background-color: #00B7FF;
+        }
+        .inactive {
+            width: 200px;
+            height:200px;
+            background-color: palevioletred;
+        }
+    </style>
+    <script src="../angular_02/angular.min.js"></script>
+</head>
+<!--<body ng-app="" ng-init="isactive=true">-->
+    <!--<button ng-click="isactive=!isactive">切换</button>-->
+    <!--<div ng-class="{true:'active',false:'inactive'}[isactive]">-->
+        <!---->
+    <!--<button ng-click="num++"></button>-->
+        <!--<div></div>-->
+    <!--</div>-->
+<!--</body>-->
+<body ng-app="" ng-init="num=1">
+    <button ng-click="num=num+1">加加</button>
+    <p>{{num}}</p>
+    <div ng-class="{1:'active',2:'inactive'}[num]"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../angular_02/angular.min.js"></script>
+</head>
+<body ng-app="" ng-init="arr=[3,5,7];objArr=[{name:'cx',password:111},{name:'lck',password:222}]">
+    <ul>
+        <li ng-repeat="item in arr">{{item}}</li>
+    </ul>
+    <ul>
+        <li ng-repeat="obj in objArr">
+            <!--<span>{{"用户名为："+obj.name}}</span>-->
+            <!--<span>{{"用户密码为："+obj.password}}</span>-->
+            <div ng-repeat="(key,value) in obj">
+                <p>{{"我的key是："+key}}</p>
+                <p>{{"我的value是："+value}}</p>
+            </div>
+        </li>
+    </ul>
+</body>
+</html>

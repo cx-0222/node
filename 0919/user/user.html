@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>USER</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="angular.min.js"></script>
+</head>
+<body ng-app="cxApp">
+    <div class="container" ng-controller="myController">
+        <div class="page-header">
+            <h1>Users</h1>
+        </div>
+        <!--表格-->
+        <table class="table table-striped">
+            <thead>
+                <th>编辑</th>
+                <th>姓</th>
+                <th>名</th>
+            </thead>
+            <tr ng-repeat="user in userArr">
+                <td>
+                    <!--$index  只适用于ng-repeat出来的数据-->
+                    <button class="btn btn-default" ng-click="edit(user._id,$index)">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        编辑
+                    </button>
+                </td>
+                <td>{{user.firstName}}</td>
+                <td>{{user.lastName}}</td>
+            </tr>
+            <!--<tr>-->
+                <!--<th>-->
+                    <!--<button class="btn btn-default" ng-click="edit($index)">-->
+                        <!--<span class="glyphicon glyphicon-pencil"></span>-->
+                        <!--编辑-->
+                    <!--</button>-->
+                <!--</th>-->
+                <!--<th>bbbb</th>-->
+                <!--<th>bb</th>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<th>-->
+                    <!--<button class="btn btn-default" ng-click="edit($index)">-->
+                        <!--<span class="glyphicon glyphicon-pencil"></span>-->
+                        <!--编辑-->
+                    <!--</button>-->
+                <!--</th>-->
+                <!--<th>cccc</th>-->
+                <!--<th>cc</th>-->
+            <!--</tr>-->
+        </table>
+
+        <!--分页-->
+        <nav>
+            <ul class="pagination">
+                <li><a href="#">&laquo;</a></li>
+                <li ng-click="find(item)" ng-repeat="item in countArr"><a>{{item+1}}</a></li>
+
+                <li><a href="#">&raquo;</a></li>
+            </ul>
+        </nav>
+        <hr>
+        <!--按钮-->
+        <button class="btn btn-success" ng-click="createUser()">
+            <span class="glyphicon glyphicon-user"></span>
+            创建新用户
+        </button>
+        <hr>
+        <h2 ng-show="createInfo">创建新用户</h2>
+        <h2 ng-hide="createInfo">编辑用户</h2>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-2">姓:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="firstName">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-2">名:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="lastName">
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="createInfo">
+                <label class="control-label col-sm-2">密码:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="password">
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="createInfo">
+                <label class="control-label col-sm-2">确认密码:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="secondpass">
+                </div>
+            </div>
+        </form>
+
+        <hr>
+        <!--按钮-->
+        <button class="btn btn-success" ng-disabled="able()" ng-click="submit()">
+            <span class="glyphicon glyphicon-save"></span>
+            保存
+        </button>
+
+    </div>
+</body>
+<script>
+    var app = angular.module("cxApp",[]);
+    app.controller("myController",function ($scope,$http) {
+        //开始就请求数据
+        $http.get("http://localhost:9090/list?page=0").success(function (res) {
+            $scope.userArr = res.userArr;
+            $scope.countArr = res.countArr;
+        });
+
+        $scope.createInfo = true;
+
+        //
+        $scope.find = function (page) {
+            console.log(page);
+            $http.get("http://localhost:9090/list?page="+page).success(function (res) {
+                $scope.userArr = res.userArr;
+                $scope.countArr = res.countArr;
+            });
+
+        }
+
+        $scope.edit = function (id,index) {
+            $scope.reset();
+            $scope.index = index;
+            $scope.id = id;
+            //console.log(index);
+            //表示点击编辑  所以创建新用户隐藏 编辑用户显示 密码  确认密码隐藏
+            if($scope.createInfo){
+                $scope.createInfo = false;
+            }
+            //姓  名 输入框 根据点击的index获取 相应地值放在 输入框中
+            $scope.firstName = $scope.userArr[index].firstName;
+            $scope.lastName = $scope.userArr[index].lastName;
+        }
+        //$scope.userArr = [
+                //{firstName:"馨",lastName:"馨"},
+                //{firstName:"娟",lastName:"娟"},
+                //{firstName:"凯",lastName:"凯"}
+            //];
+
+        //保存按钮 是否禁用
+        $scope.able = function () {
+            //开始的时候 显示的是创建新用户 进if  当点击了编辑后 走else 此时 已经有index了  所以 不可以直接赋初值 因为一开始是不需要判断的
+            if($scope.createInfo){
+                if($scope.firstName != "" && $scope.lastName != "" && $scope.password != "" && $scope.secondpass != "" && $scope.password == $scope.secondpass){
+                    return false;
+                }
+            }else{
+                var first = $scope.userArr[$scope.index].firstName;
+                var last = $scope.userArr[$scope.index].lastName;
+                if($scope.firstName != "" && $scope.lastName != ""  && ($scope.firstName != first || $scope.lastName != last)){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //点击保存按钮的时候 先判断是创建新用户 还是编辑用户 再做出相应的操作
+        $scope.submit = function () {
+            if($scope.createInfo){
+                //创建新用户
+                var obj = {};
+                obj.firstName = $scope.firstName;
+                obj.lastName = $scope.lastName;
+                obj.password = $scope.password;
+                obj.secondpass = $scope.secondpass;
+                $scope.userArr.push(obj);
+                $scope.reset();
+            }else {
+                //修改用户
+                //$scope.userArr[$scope.index].firstName = $scope.firstName;
+                //$scope.userArr[$scope.index].lastName = $scope.lastName;
+                var url = "http://localhost:9090/update?id="+$scope.id+"&firstName="+$scope.firstName+"&lastName="+$scope.lastName;
+                $http.get(url).success(function (res) {
+                    if(res.errcode == 0){
+                        console.log(res.msg);
+                        $scope.userArr[$scope.index].firstName = $scope.firstName;
+                        $scope.userArr[$scope.index].lastName = $scope.lastName;
+                    }else{
+                        console.log(res.msg);
+                    }
+                    $scope.reset();
+                });
+            }
+            //$scope.reset();
+        }
+
+        //input框 操作后清空数据
+        $scope.reset = function () {
+            $scope.firstName = "";
+            $scope.lastName = "";
+            $scope.password = "";
+            $scope.secondpass = "";
+        }
+
+        //创建新用户
+        $scope.createUser = function () {
+            $scope.reset();
+            if(!$scope.createInfo){
+                $scope.createInfo = true;
+
+            }
+        }
+
+        //进入就清空 也相当于给这几个输入框赋初值
+        $scope.reset();
+    });
+</script>
+</html>

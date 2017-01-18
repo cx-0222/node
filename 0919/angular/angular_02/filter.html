@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="angular.min.js"></script>
+</head>
+<body ng-app="lckApp">
+    <div ng-controller="myController">
+        <input type="text" ng-model="name">
+        <ul>
+            <li ng-repeat="item in nameArr | filter:name">
+                <span ng-bind="item">{{item}}</span>
+            </li>
+        </ul>
+        <input type="text" ng-model="num1">
+        <input type="text" ng-model="num2">
+        <p><span>{{"How much?" | lowercase}}</span></p>
+        {{ cheng() | currency:"￥" }}
+    </div>
+</body>
+<script>
+    var app = angular.module("lckApp",[]);
+    app.controller("myController",function ($scope) {
+        $scope.cheng = function () {
+            return $scope.num1 * $scope.num2;
+        }
+        $scope.nameArr = ["tangseng","wukong","baijie","shasheng","xiaobailong"]
+    })
+</script>
+</html>
